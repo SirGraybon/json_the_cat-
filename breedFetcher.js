@@ -1,24 +1,28 @@
 const request = require('request');
-const fetch = function(url) {
-  request(url, (error, response, body) => {
+const fetchBreedDescription = function(breedname, callback) {
+  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedname}`, (error, response, body) => {
     if (error) {
-      console.log(error);
-      return error;
+      callback(error, null);
     }
-    if (body === "[]") {
-      console.log("Breed not found");
+   
+    let desc = JSON.parse(body);
+    console.log(desc)
+    if (desc[0]) {      
+      callback(null, desc[0].description);
     } else {
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      console.log('body:', JSON.parse(body)); // Print the HTML for the Google homepage. 
+      callback("Breed not found")
     }
+
+
+
+
   });
 };
 
 let search = process.argv.slice(2);
-fetch(`https://api.thecatapi.com/v1/breeds/search?q=${search}`, (error, description) => {
+//fetch(`https://api.thecatapi.com/v1/breeds/search?q=${search}`, (error, description) => {
 
-});
+//});
 
-
+module.exports = { fetchBreedDescription };
 ///// need ot handle undefined /////
